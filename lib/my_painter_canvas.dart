@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 class MyPaintCanvas extends CustomPainter {
   List<Particle> particles;
   Random rnd;
-
-  MyPaintCanvas(this.particles, this.rnd);
+  double animValue;
+  MyPaintCanvas( this.particles,  this.rnd, this.animValue);
 
   @override
   void paint(Canvas canvas, Size size) {
     //update
     for (var p in particles) {
-      var velocity = polarToDecart(p.speed!, p.theta!);
-      var dx = p.position.dx + velocity.dx;
-      var dy = p.position.dy + velocity.dy;
+      var speed = polarToDecart(p.speed!, p.theta!);
+      var dx = p.position.dx + speed.dx;
+      var dy = p.position.dy - speed.dy;
       if (p.position.dx < 0 || p.position.dx > size.width) {
         dx = rnd.nextDouble() * size.width;
       }
@@ -26,11 +26,11 @@ class MyPaintCanvas extends CustomPainter {
     }
 
     //paint object
-    this.particles.forEach((p) {
+    for (var p in particles) {
       var paint = Paint();
       paint.color = Colors.red;
       canvas.drawCircle(p.position, p.radius!, paint);
-    });
+    }
     //big buble
     // var dx = size.width / 2;
     // var dy = size.width / 2;
@@ -48,5 +48,5 @@ class MyPaintCanvas extends CustomPainter {
 }
 
 Offset polarToDecart(double speed, double theta) {
-  return Offset(speed * cos(theta), speed * sin(theta));
+  return Offset(speed * cos(theta), speed / sin(theta));
 }
